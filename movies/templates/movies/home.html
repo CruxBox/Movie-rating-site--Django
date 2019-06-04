@@ -1,0 +1,22 @@
+{% extends "movies/base.html" %}
+{% block content %}
+    {% for movie in movies %}
+        <article class="media content-section">
+          <div class="media-body">
+          <div class = "media">
+          <img src = "{{ movie.pic }}">
+            <div class="article-metadata">
+              <a class="mr-2 ml-5" href="#">{{ movie.title }}</a>
+              <small class="text-muted">{{ movie.release_date|date:"F d, Y" }}</small>
+               </div>
+              </div>
+              <div> 
+              <h2> Rating for this movie: {{ movie.rate }} </h2>
+            <p class="article-content"><h2>Description:</h2>
+            {{ movie.description }}</p>
+            <h2><a class="article-title" href="{{ movie.imdb_url }}">Click to go to IMDB URL</a></h2>
+          </div>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
