@@ -3,20 +3,48 @@
     {% for movie in movies %}
         <article class="media content-section">
           <div class="media-body">
-          <div class = "media">
-          <img src = "{{ movie.pic }}">
-            <div class="article-metadata">
-              <a class="mr-2 ml-5" href="#">{{ movie.title }}</a>
-              <small class="text-muted">{{ movie.release_date|date:"F d, Y" }}</small>
+            <div class = "media">
+              <img src = "{{ movie.pic }}">
+                <div class="article-metadata">
+                  <a class="mr-2 ml-5" href="#">{{ movie.title }}</a>
+                  <small class="text-muted">{{ movie.release_date|date:"F d, Y" }}</small>
                </div>
-              </div>
+            </div>
               <div> 
-              <h2> Rating for this movie: {{ movie.rate }} </h2>
-            <p class="article-content"><h2>Description:</h2>
-            {{ movie.description }}</p>
-            <h2><a class="article-title" href="{{ movie.imdb_url }}">Click to go to IMDB URL</a></h2>
-          </div>
-          </div>
+                <hr><br>
+                <h2> Rating for this movie:</h2><p>{% if movie.get_avg_rating == None %} Not Rated
+                {% else %}
+                {{ movie.get_avg_rating }} 
+                {% endif %}</p><br>
+                <h2>Actors:</h2> <br>
+                {% for act in movie.actor.all %}
+                <strong style="text-align: left;"> {{ act.actor }}</strong>
+                <h5> Other movies: </h5>
+                <ul>
+                  {% for other_movie in act.movies.all %}
+                  {% if movie.title != other_movie.title %}
+                  <li><a href="{{ other_movie.imdb_url }}">{{ other_movie.title }}</a></li>
+                  {% endif %}
+                  {% endfor %}
+                </ul><br>
+                {% endfor %}
+                <h2>Director(s):</h2>
+                {% for dir in movie.director.all %}
+                <p style="text-align: left;"> {{ dir.director }}</p>
+                <h5> Other movies: </h5>
+                <ul>
+                  {% for other_movie in dir.movies.all %}
+                  {% if movie.title != other_movie.title %}
+                  <li><a href="{{ other_movie.imdb_url }}">{{ other_movie.title }}</a></li>
+                  {% endif %}
+                  {% endfor %}
+                </ul>
+                {% endfor %}
+                <p class="article-content"><h2>Description:</h2>
+                {{ movie.description }}</p>
+                <h2><a class="article-title" href="{{ movie.imdb_url }}">Click to go to IMDB URL</a></h2>
+              </div>
+            </div>
         </article>
     {% endfor %}
 {% endblock content %}

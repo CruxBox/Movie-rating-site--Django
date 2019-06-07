@@ -14,9 +14,9 @@ class UserManager(BaseUserManager):
             username = username
         )
         user.set_password(password)
-        user.is_active = is_active
-        user.is_staff = is_staff
-        user.is_admin = is_admin
+        user.active = is_active
+        user.staff = is_staff
+        user.admin = is_admin
         user.save(using=self._db)
         return user
 
@@ -42,7 +42,7 @@ class UserManager(BaseUserManager):
 
 class Person(AbstractBaseUser,PermissionsMixin):
     USERNAME_FIELD = 'username'
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) 
     admin = models.BooleanField(default=False) 
     REQUIRED_FIELDS = []
@@ -80,17 +80,17 @@ class Public_user(models.Model):
     def __str__(self):
         return self.new_user.username
     def highest_rated_movie(self):
-        self.highest = mod.Movie_rating.objects.filter(user = self).aggregate(models.Max('rating'))
+        return mod.Movie_rating.objects.filter(user = self).aggregate(models.Max('rating'))[0]
     def lowest_rated_movie(self):
-        self.lowest = mod.Movie_rating.objects.filter(user = self).aggregate(models.Min('rating'))
+        return mod.Movie_rating.objects.filter(user = self).aggregate(models.Min('rating'))[0]
     def avg_rating(self):
-        self.average = mod.Movie_rating.objects.filter(user = self).aggregate(models.Avg('rating'))
+        return mod.Movie_rating.objects.filter(user = self).aggregate(models.Avg('rating'))[0]
 
 
 
 class Actor(models.Model):
     actor = models.OneToOneField('Person',on_delete = models.CASCADE)
-    movies = models.ManyToManyField('movies.Movie',related_name = "actors")
+    movies = models.ManyToManyField('movies.Movie',related_name = "actor")
  
     def __str__(self):
         if self.actor.first_name==None:
@@ -98,28 +98,28 @@ class Actor(models.Model):
         return self.actor.first_name + ' ' + self.actor.last_name
 
     def acting_since(self):
-        self.earliest_movie = self.movies.order_by('release_date').first()
+        return self.movies.order_by('release_date').first()
     
     def best_movie(self):
-        self._best_movie = self.movies.Movie_rating_set.order_by('rating').first()
+        return self.movies.Movie_rating_set.order_by('rating').first()
         
     def worst_movie(self):
-        self._worst_movie = self.movies.Movie_rating_set.order_by('-rating').first()
+        return self.movies.Movie_rating_set.order_by('-rating').first()
         
 
 class Director(models.Model): 
     director = models.OneToOneField('Person', on_delete=models.CASCADE)
-    movies = models.ManyToManyField('movies.Movie')
+    movies = models.ManyToManyField('movies.Movie',related_name = "director")
     def __str__(self):
         return self.director.first_name + ' ' + self.director.last_name
     def directing_since(self):
-        self.first_movie_directed = self.Movies.order_by('release_date').first()
+        return self.Movies.order_by('release_date').first()
     
     def best_movie(self):
-        self._best_movie = self.movies.Movie_rating_set.order_by('rating').first()
+        return self.movies.Movie_rating_set.order_by('rating').first()
         
     def worst_movie(self):
-        self._worst_movie = self.movies.Movie_rating_set.order_by('-rating').first()
+        return self.movies.Movie_rating_set.order_by('-rating').first()
         
     
   

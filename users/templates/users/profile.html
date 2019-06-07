@@ -7,7 +7,14 @@
           <h2 class="account-heading">{{ user.username }}</h2>
           <p class="text-secondary">{{ user.email }}</p>
         </div>
+        <div class="media-body">
+        <b> Highest Rated Movie: {{ user.public_user.highest_rated_movie }} </b>
+
+        <b> Lowest Rated Movie: {{ user.public_user.lowest_rated_movie }} </b>
+        
+        <b> Average ratings: {{ user.public_user.avg_rating }} </b>
+  
+        </div>
       </div>
-      <!-- FORM HERE -->
     </div>
 {% endblock content %}

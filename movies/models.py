@@ -10,7 +10,7 @@ class Movie(models.Model):
     imdb_url = models.URLField(unique = True,null=True)
     pic = models.ImageField(default = 'default.jpg',upload_to = 'cover_pics')
     def get_avg_rating(self):
-        self.rate =  Movie_rating.objects.filter(title=self.title).aggregate(models.Avg('rating'))
+        return Movie_rating.objects.filter(movie__title=self.title).aggregate(models.Avg('rating'))['rating__avg']
 
     def __str__(self):
         return self.title
