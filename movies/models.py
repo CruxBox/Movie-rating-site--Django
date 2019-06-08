@@ -22,3 +22,6 @@ class Movie_rating(models.Model):
     rating = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)],)
     rated_on = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return str(self.movie.title) + '-' + str(self.rating)
+

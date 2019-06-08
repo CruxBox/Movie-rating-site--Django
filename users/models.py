@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import date
-from movies import models as mod
+from movies.models import Movie_rating
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
 
 class UserManager(BaseUserManager):
@@ -80,12 +80,21 @@ class Public_user(models.Model):
     def __str__(self):
         return self.new_user.username
     def highest_rated_movie(self):
-        return mod.Movie_rating.objects.filter(user = self).aggregate(models.Max('rating'))[0]
+        if self.movie_rating_set.all().count() == 0 :
+            return "Not Rated"
+        return self.movie_rating_set.order_by('-rating')[0]
     def lowest_rated_movie(self):
-        return mod.Movie_rating.objects.filter(user = self).aggregate(models.Min('rating'))[0]
+        if self.movie_rating_set.all().count() == 0 :
+            return "Not Rated"
+        return self.movie_rating_set.order_by('rating')[0]
     def avg_rating(self):
-        return mod.Movie_rating.objects.filter(user = self).aggregate(models.Avg('rating'))[0]
-
+        sum=0 
+        count = self.movie_rating_set.all().count()
+        if count == 0:
+            return 0
+        for object in self.movie_rating_set.all():
+            sum+= object.rating
+        return sum/count
 
 
 class Actor(models.Model):
@@ -101,10 +110,14 @@ class Actor(models.Model):
         return self.movies.order_by('release_date').first()
     
     def best_movie(self):
-        return self.movies.Movie_rating_set.order_by('rating').first()
+        if self.movies.movie_rating_set.all().count() == 0 :
+            return "Not Rated"
+        return self.movies.movie_rating_set.order_by('-rating').first()
         
     def worst_movie(self):
-        return self.movies.Movie_rating_set.order_by('-rating').first()
+        if self.movies.movie_rating_set.all().count() == 0 :
+            return "Not Rated"
+        return self.movies.movie_rating_set.order_by('rating').first()
         
 
 class Director(models.Model): 
@@ -113,13 +126,17 @@ class Director(models.Model):
     def __str__(self):
         return self.director.first_name + ' ' + self.director.last_name
     def directing_since(self):
-        return self.Movies.order_by('release_date').first()
+        return self.movies.order_by('release_date').first()
     
     def best_movie(self):
-        return self.movies.Movie_rating_set.order_by('rating').first()
+        if self.movies.movie_rating_set.all().count() == 0 :
+            return "Not Rated"
+        return self.movies.movie_rating_set.order_by('-rating').first()
         
     def worst_movie(self):
-        return self.movies.Movie_rating_set.order_by('-rating').first()
+        if self.movies.movie_rating_set.all().count() == 0 :
+            return "Not Rated"
+        return self.movies.movie_rating_set.order_by('rating').first()
         
     
   
