@@ -7,8 +7,6 @@ class UserManager(BaseUserManager):
     def create_user(self,username,email, password=None,is_active=True,is_staff=False,is_admin=False):
         if not username:
             raise ValueError(' you need a username.')
-        if not email:
-            raise ValueError('Users must have an email address')
         user = self.model(
             email=self.normalize_email(email),
             username = username
@@ -28,10 +26,10 @@ class UserManager(BaseUserManager):
         )
         return user
 
-    def create_superuser(self,username,email, password):
+    def create_superuser(self,username, password):
         user = self.create_user(
             username = username,
-            email = email,
+            email =None,
             password=password,is_staff = True,
         is_admin = True
         )
@@ -75,7 +73,7 @@ class Person(AbstractBaseUser,PermissionsMixin):
 
 
 class Public_user(models.Model):
-    new_user = models.OneToOneField('Person', on_delete=models.CASCADE)
+    new_user = models.OneToOneField(Person, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.new_user.username
